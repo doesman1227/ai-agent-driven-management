@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIエージェントドリブン経営 | 人とAIが共創する次世代の経営モデル</title>
+<meta name="description" content="社員一人ひとりがAIエージェントと共同・共創しながら、仮説検証を繰り返し自律的に業務課題を解決する『科学的マネジメント』。エンタープライズアーキテクチャ・制約理論・ナレッジマネジメントを融合した次世代の経営モデルを解説します。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;800;900&family=Noto+Serif+JP:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0e17;
+    --bg-soft:#111725;
+    --bg-card:#141b2b;
+    --bg-elev:#1a2334;
+    --line:#26304a;
+    --text:#e7ecf5;
+    --muted:#9aa7c0;
+    --faint:#6b7794;
+    --brand:#5b8dff;
+    --brand-2:#7c6bff;
+    --accent:#31d0c6;
+    --accent-2:#ffb454;
+    --danger:#ff6b8a;
+    --grad:linear-gradient(120deg,#5b8dff 0%,#7c6bff 55%,#31d0c6 120%);
+    --grad-soft:linear-gradient(120deg,rgba(91,141,255,.16),rgba(124,107,255,.10));
+    --shadow:0 20px 60px -20px rgba(0,0,0,.7);
+    --radius:18px;
+    --maxw:1120px;
+  }
+  @media (prefers-color-scheme:light){
+    :root{
+      --bg:#f6f8fd;
+      --bg-soft:#eef2fb;
+      --bg-card:#ffffff;
+      --bg-elev:#ffffff;
+      --line:#e0e6f2;
+      --text:#141a29;
+      --muted:#54617e;
+      --faint:#8592ad;
+      --shadow:0 20px 50px -24px rgba(30,50,110,.35);
+      --grad-soft:linear-gradient(120deg,rgba(91,141,255,.10),rgba(124,107,255,.07));
+    }
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:"Noto Sans JP",-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Hiragino Sans","Yu Gothic",Meiryo,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    line-height:1.85;
+    -webkit-font-smoothing:antialiased;
+    letter-spacing:.01em;
+    overflow-x:hidden;
+  }
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:.78rem;font-weight:700;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--brand);
+    padding:6px 14px;border:1px solid var(--line);border-radius:999px;
+    background:var(--grad-soft);
+  }
+  .eyebrow::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--accent)}
+  h2.section-title{font-size:clamp(1.7rem,3.6vw,2.5rem);font-weight:800;line-height:1.35;letter-spacing:.01em;margin:18px 0 14px}
+  .section-lead{color:var(--muted);font-size:1.05rem;max-width:680px}
+  .gradient-text{background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+
+  /* NAV */
+  header.nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);
+    background:color-mix(in srgb,var(--bg) 78%,transparent);border-bottom:1px solid var(--line)}
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;height:64px}
+  .logo{display:flex;align-items:center;gap:11px;font-weight:800;font-size:1.02rem;letter-spacing:.02em}
+  .logo .mark{width:30px;height:30px;border-radius:9px;background:var(--grad);display:grid;place-items:center;
+    box-shadow:0 6px 18px -6px var(--brand);flex:none}
+  .logo .mark span{font-size:15px}
+  .nav-links{display:flex;gap:28px;align-items:center}
+  .nav-links a{font-size:.9rem;color:var(--muted);font-weight:600;transition:color .2s}
+  .nav-links a:hover{color:var(--text)}
+  .nav-cta{background:var(--grad);color:#fff;padding:9px 18px;border-radius:999px;font-size:.86rem;font-weight:700;
+    box-shadow:0 8px 22px -8px var(--brand)}
+  @media(max-width:820px){.nav-links a:not(.nav-cta){display:none}}
+
+  /* HERO */
+  .hero{position:relative;padding:88px 0 76px;overflow:hidden}
+  .hero .glow{position:absolute;inset:0;z-index:0;pointer-events:none}
+  .hero .glow::before,.hero .glow::after{content:"";position:absolute;border-radius:50%;filter:blur(80px);opacity:.5}
+  .hero .glow::before{width:520px;height:520px;background:radial-gradient(circle,#5b8dff,transparent 62%);top:-160px;right:-120px}
+  .hero .glow::after{width:460px;height:460px;background:radial-gradient(circle,#31d0c6,transparent 62%);bottom:-220px;left:-140px;opacity:.32}
+  .hero-inner{position:relative;z-index:1;display:grid;grid-template-columns:1.15fr .85fr;gap:56px;align-items:center}
+  .hero h1{font-size:clamp(2.1rem,5.2vw,3.5rem);font-weight:900;line-height:1.25;letter-spacing:.005em;margin:22px 0 20px}
+  .hero p.sub{font-size:1.12rem;color:var(--muted);max-width:560px;margin-bottom:32px}
+  .hero-btns{display:flex;gap:14px;flex-wrap:wrap}
+  .btn{display:inline-flex;align-items:center;gap:9px;padding:14px 26px;border-radius:999px;font-weight:700;font-size:.98rem;transition:transform .18s,box-shadow .18s}
+  .btn-primary{background:var(--grad);color:#fff;box-shadow:0 14px 34px -12px var(--brand)}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 20px 44px -12px var(--brand)}
+  .btn-ghost{border:1px solid var(--line);color:var(--text);background:var(--bg-card)}
+  .btn-ghost:hover{border-color:var(--brand);transform:translateY(-2px)}
+  .hero-stats{display:flex;gap:30px;margin-top:40px;flex-wrap:wrap}
+  .hero-stats .st{}
+  .hero-stats .num{font-size:1.7rem;font-weight:900;line-height:1;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .hero-stats .lbl{font-size:.82rem;color:var(--faint);margin-top:6px}
+
+  /* HERO visual — pilot metaphor */
+  .hero-visual{position:relative}
+  .pilot-card{background:var(--bg-card);border:1px solid var(--line);border-radius:22px;padding:26px;box-shadow:var(--shadow)}
+  .pilot-row{display:flex;align-items:center;gap:14px;padding:14px 0}
+  .pilot-row+.pilot-row{border-top:1px dashed var(--line)}
+  .pilot-ic{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:20px;flex:none}
+  .pilot-ic.old{background:rgba(154,167,192,.14);color:var(--muted)}
+  .pilot-ic.new{background:var(--grad-soft);border:1px solid var(--line)}
+  .pilot-txt b{display:block;font-size:.98rem}
+  .pilot-txt small{color:var(--faint);font-size:.82rem}
+  .pilot-arrow{text-align:center;color:var(--brand);font-weight:800;font-size:.8rem;letter-spacing:.1em;margin:2px 0}
+  @media(max-width:900px){.hero-inner{grid-template-columns:1fr;gap:40px}.hero-visual{max-width:440px}}
+
+  /* SECTION base */
+  section.block{padding:76px 0;position:relative}
+  section.block.alt{background:var(--bg-soft)}
+  .divider{height:1px;background:linear-gradient(90deg,transparent,var(--line),transparent)}
+
+  /* generic cards grid */
+  .grid{display:grid;gap:20px}
+  .g3{grid-template-columns:repeat(3,1fr)}
+  .g2{grid-template-columns:repeat(2,1fr)}
+  @media(max-width:860px){.g3,.g2{grid-template-columns:1fr}}
+  .card{background:var(--bg-card);border:1px solid var(--line);border-radius:var(--radius);padding:28px;transition:transform .2s,border-color .2s}
+  .card:hover{transform:translateY(-4px);border-color:color-mix(in srgb,var(--brand) 55%,var(--line))}
+  .card .ic{width:50px;height:50px;border-radius:13px;background:var(--grad-soft);border:1px solid var(--line);display:grid;place-items:center;font-size:24px;margin-bottom:16px}
+  .card h3{font-size:1.18rem;font-weight:800;margin-bottom:10px;letter-spacing:.01em}
+  .card p{color:var(--muted);font-size:.96rem}
+  .card .tag{font-size:.74rem;font-weight:700;color:var(--brand);letter-spacing:.08em;text-transform:uppercase}
+
+  /* definition block */
+  .def{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:center}
+  @media(max-width:860px){.def{grid-template-columns:1fr;gap:28px}}
+  .def-quote{background:var(--bg-card);border:1px solid var(--line);border-left:4px solid var(--brand);
+    border-radius:var(--radius);padding:32px 30px;font-size:1.28rem;font-weight:700;line-height:1.85;box-shadow:var(--shadow)}
+  .def-quote em{font-style:normal;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .def ul{list-style:none;display:flex;flex-direction:column;gap:16px}
+  .def li{display:flex;gap:14px;align-items:flex-start}
+  .def li .k{flex:none;width:26px;height:26px;border-radius:8px;background:var(--grad-soft);border:1px solid var(--line);
+    display:grid;place-items:center;font-size:14px;margin-top:3px}
+  .def li b{display:block;margin-bottom:2px}
+  .def li span{color:var(--muted);font-size:.95rem}
+
+  /* knowledge pyramid */
+  .pyramid{display:flex;flex-direction:column;gap:12px;max-width:640px;margin:0 auto}
+  .layer{border-radius:14px;padding:22px 26px;border:1px solid var(--line);position:relative;overflow:hidden}
+  .layer .lnum{position:absolute;right:20px;top:14px;font-size:2.4rem;font-weight:900;opacity:.10}
+  .layer h4{font-size:1.15rem;font-weight:800;margin-bottom:5px}
+  .layer p{color:var(--muted);font-size:.94rem}
+  .layer.l1{background:linear-gradient(120deg,rgba(91,141,255,.18),rgba(91,141,255,.04));margin:0 8%}
+  .layer.l2{background:linear-gradient(120deg,rgba(124,107,255,.16),rgba(124,107,255,.04));margin:0 4%}
+  .layer.l3{background:linear-gradient(120deg,rgba(49,208,198,.15),rgba(49,208,198,.04))}
+  .layer .q{font-size:.8rem;font-weight:700;color:var(--brand);letter-spacing:.04em}
+
+  /* steps timeline */
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:0;position:relative;margin-top:20px}
+  @media(max-width:860px){.steps{grid-template-columns:1fr;gap:18px}}
+  .step{padding:28px 24px;position:relative}
+  .step .n{width:46px;height:46px;border-radius:50%;background:var(--grad);color:#fff;display:grid;place-items:center;
+    font-weight:900;font-size:1.1rem;margin-bottom:16px;box-shadow:0 10px 24px -10px var(--brand)}
+  .step h3{font-size:1.1rem;font-weight:800;margin-bottom:8px}
+  .step p{color:var(--muted);font-size:.94rem}
+  .step:not(:last-child)::after{content:"";position:absolute;top:50px;right:-1px;width:1px;height:calc(100% - 40px);background:var(--line)}
+  @media(max-width:860px){.step:not(:last-child)::after{display:none}.step{background:var(--bg-card);border:1px solid var(--line);border-radius:var(--radius)}}
+
+  /* roadmap */
+  .road{display:flex;gap:0;align-items:stretch;margin-top:24px;flex-wrap:wrap}
+  .phase{flex:1;min-width:220px;background:var(--bg-card);border:1px solid var(--line);padding:26px 24px;position:relative}
+  .phase:first-child{border-radius:var(--radius) 0 0 var(--radius)}
+  .phase:last-child{border-radius:0 var(--radius) var(--radius) 0}
+  @media(max-width:860px){.phase{border-radius:var(--radius)!important;min-width:100%}}
+  .phase .en{font-size:.76rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--brand)}
+  .phase h3{font-size:1.22rem;font-weight:800;margin:8px 0 10px}
+  .phase p{color:var(--muted);font-size:.93rem}
+  .phase .step-badge{position:absolute;top:-11px;left:24px;background:var(--bg);border:1px solid var(--line);
+    color:var(--faint);font-size:.72rem;font-weight:700;padding:2px 11px;border-radius:999px}
+
+  /* effects */
+  .effect{text-align:center;padding:34px 26px}
+  .effect .big{font-size:2.6rem;margin-bottom:12px}
+  .effect h3{font-size:1.35rem;font-weight:900;margin-bottom:10px;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .effect p{color:var(--muted);font-size:.95rem}
+
+  /* use cases */
+  .case{display:flex;gap:18px;align-items:flex-start}
+  .case .cic{flex:none;width:52px;height:52px;border-radius:14px;background:var(--grad-soft);border:1px solid var(--line);display:grid;place-items:center;font-size:24px}
+  .case h3{font-size:1.1rem;font-weight:800;margin-bottom:6px}
+  .case p{color:var(--muted);font-size:.94rem}
+  .case .metric{display:inline-block;margin-top:10px;font-size:.78rem;font-weight:700;color:var(--accent);
+    background:rgba(49,208,198,.10);border:1px solid rgba(49,208,198,.28);padding:3px 12px;border-radius:999px}
+
+  /* tech strip */
+  .tech-strip{display:flex;gap:14px;flex-wrap:wrap;margin-top:8px}
+  .chip{display:inline-flex;align-items:center;gap:9px;background:var(--bg-card);border:1px solid var(--line);
+    border-radius:12px;padding:12px 18px;font-weight:700;font-size:.92rem}
+  .chip small{color:var(--faint);font-weight:500;font-size:.8rem}
+
+  /* FAQ / cautions */
+  .faq{display:flex;flex-direction:column;gap:14px;max-width:820px;margin:0 auto}
+  details.qa{background:var(--bg-card);border:1px solid var(--line);border-radius:14px;padding:4px 22px;transition:border-color .2s}
+  details.qa[open]{border-color:color-mix(in srgb,var(--brand) 45%,var(--line))}
+  details.qa summary{cursor:pointer;list-style:none;font-weight:700;font-size:1.03rem;padding:18px 0;display:flex;justify-content:space-between;align-items:center;gap:16px}
+  details.qa summary::-webkit-details-marker{display:none}
+  details.qa summary .plus{flex:none;width:26px;height:26px;border-radius:8px;background:var(--grad-soft);border:1px solid var(--line);display:grid;place-items:center;font-weight:900;color:var(--brand);transition:transform .2s}
+  details.qa[open] summary .plus{transform:rotate(45deg)}
+  details.qa .a{color:var(--muted);font-size:.96rem;padding:0 0 20px;line-height:1.85}
+  details.qa .a b{color:var(--text)}
+
+  /* CTA */
+  .cta{position:relative;overflow:hidden;border-radius:26px;padding:60px 44px;text-align:center;
+    background:var(--grad);color:#fff;box-shadow:var(--shadow);margin:0 auto}
+  .cta::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 20% 20%,rgba(255,255,255,.22),transparent 45%),radial-gradient(circle at 80% 80%,rgba(255,255,255,.12),transparent 45%)}
+  .cta *{position:relative;z-index:1}
+  .cta h2{font-size:clamp(1.6rem,4vw,2.4rem);font-weight:900;margin-bottom:14px;line-height:1.4}
+  .cta p{font-size:1.05rem;opacity:.94;max-width:600px;margin:0 auto 28px}
+  .cta .btn-primary{background:#fff;color:#2340a0}
+  .cta .btn-primary:hover{box-shadow:0 18px 40px -14px rgba(0,0,0,.5)}
+
+  /* footer */
+  footer{padding:52px 0 40px;border-top:1px solid var(--line);color:var(--faint);font-size:.88rem}
+  .foot-inner{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:center}
+  .foot-note{max-width:560px;line-height:1.7}
+
+  /* reveal anim — only active when JS is present, so no-JS/static renders show everything */
+  .js .reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease}
+  .js .reveal.in{opacity:1;transform:none}
+  @media(prefers-reduced-motion:reduce){.js .reveal{opacity:1;transform:none;transition:none}}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <div class="logo"><span class="mark"><span>◆</span></span> AIエージェントドリブン経営</div>
+    <nav class="nav-links">
+      <a href="../">← m-note トップ</a>
+      <a href="#what">概要</a>
+      <a href="#why">なぜ今</a>
+      <a href="#framework">理論基盤</a>
+      <a href="#steps">導入ステップ</a>
+      <a href="#cases">事例</a>
+      <a href="#faq" class="nav-cta">よくある質問</a>
+    </nav>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="glow"></div>
+  <div class="wrap hero-inner">
+    <div>
+      <span class="eyebrow">次世代の科学的マネジメント</span>
+      <h1>人とAIが<span class="gradient-text">共創</span>する、<br>自律駆動の経営へ。</h1>
+      <p class="sub">社員一人ひとりがAIエージェントと共同・共創しながら、仮説と検証を繰り返し、自律的に業務課題を解決する——それが<strong>AIエージェントドリブン経営</strong>です。マネジメントサイクル（PDCA）の全タスクにAIエージェントを組み込み、経営そのものを駆動させます。</p>
+      <div class="hero-btns">
+        <a href="#what" class="btn btn-primary">経営モデルを知る →</a>
+        <a href="#steps" class="btn btn-ghost">導入ステップを見る</a>
+      </div>
+      <div class="hero-stats">
+        <div class="st"><div class="num">3つの理論</div><div class="lbl">EA・制約理論・ナレッジマネジメント</div></div>
+        <div class="st"><div class="num">3層ナレッジ</div><div class="lbl">規範・戦略・実践</div></div>
+        <div class="st"><div class="num">3つの力</div><div class="lbl">成功力・適応力・継続力</div></div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="pilot-card">
+        <div class="pilot-row">
+          <div class="pilot-ic old">🧑‍✈️</div>
+          <div class="pilot-txt"><b>これまで：副操縦士（コパイロット）</b><small>人間の作業を横で支援するAI</small></div>
+        </div>
+        <div class="pilot-arrow">▼ 役割の進化 ▼</div>
+        <div class="pilot-row">
+          <div class="pilot-ic new">🛩️</div>
+          <div class="pilot-txt"><b>これから：操縦士（エージェント）</b><small>目標達成のため自ら考え、実行まで完結するAI</small></div>
+        </div>
+        <div class="pilot-row">
+          <div class="pilot-ic new">🔁</div>
+          <div class="pilot-txt"><b>知のスパイラルで自己進化</b><small>作業実績を1つずつ記録し、次のサイクルで参照</small></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- WHAT -->
+<section class="block" id="what">
+  <div class="wrap reveal">
+    <span class="eyebrow">What</span>
+    <h2 class="section-title">AIエージェントドリブン経営とは</h2>
+    <p class="section-lead">単なるAIツールの導入ではありません。人間はAIエージェントを「訓練・調教・活用」しながら、共に業務を遂行する——経営の仕組みそのものを再設計するアプローチです。</p>
+    <div class="def" style="margin-top:38px">
+      <div class="def-quote">
+        社員一人ひとりがAIエージェントと<em>共同・共創</em>しながら、仮説と検証を繰り返し、自律的に業務課題を解決する<em>「科学的マネジメント」</em>のスタイル。
+      </div>
+      <ul>
+        <li><span class="k">🎯</span><div><b>本質</b><span>マネジメントサイクル（PDCA）の全タスクにAIエージェントが組み込まれ、AIが自律的にタスクを駆動させる経営を目指します。</span></div></li>
+        <li><span class="k">🗂️</span><div><b>基盤① ナレッジベース</b><span>企業の理念・戦略・日々の「実践ナレッジ」を蓄積・管理する土台。</span></div></li>
+        <li><span class="k">🖥️</span><div><b>基盤② 経営プラットフォーム</b><span>メンバーとAIエージェントがタスクを遂行し、その実績を1つずつ記録・共有・評価できる実行環境。</span></div></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- WHY -->
+<section class="block alt" id="why">
+  <div class="wrap reveal">
+    <span class="eyebrow">Why now</span>
+    <h2 class="section-title">なぜ今、必要なのか</h2>
+    <p class="section-lead">AIの役割が「支援」から「実行」へと進化した今、従来の人間中心の意思決定ではスピードが追いつかなくなっています。</p>
+    <div class="grid g3" style="margin-top:38px">
+      <div class="card">
+        <div class="ic">⚡</div>
+        <span class="tag">Speed</span>
+        <h3>環境変化への即応力</h3>
+        <p>激しい環境変化に対し、従来の意思決定ではスピードが追いつきません。AIによる<strong>爆速の仮説検証サイクル</strong>が不可欠です。</p>
+      </div>
+      <div class="card">
+        <div class="ic">🌱</div>
+        <span class="tag">People</span>
+        <h3>人的リソースの高付加価値化</h3>
+        <p>労働力不足の中、人間を定型的な処理業務から解放し、より創造的な<strong>「価値創造業務」</strong>へシフトさせる必要があります。</p>
+      </div>
+      <div class="card">
+        <div class="ic">🧠</div>
+        <span class="tag">Knowledge</span>
+        <h3>組織の暗黙知の消失を防ぐ</h3>
+        <p>ベテラン社員の退職等によるナレッジ流出を防ぎ、組織の資産として<strong>永続化</strong>させる仕組みが求められています。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FRAMEWORK -->
+<section class="block" id="framework">
+  <div class="wrap reveal">
+    <span class="eyebrow">Framework</span>
+    <h2 class="section-title">3つの理論的基盤</h2>
+    <p class="section-lead">AIエージェントドリブン経営は、次の3つの理論を融合させた強固な基盤を持ちます。</p>
+    <div class="grid g3" style="margin-top:38px">
+      <div class="card">
+        <div class="ic">🏛️</div>
+        <h3>エンタープライズアーキテクチャ（EA）</h3>
+        <p>企業を目的・資産・機能などで構造化し、変化に強い<strong>「情報の骨組み」</strong>を作ります。</p>
+      </div>
+      <div class="card">
+        <div class="ic">🔗</div>
+        <h3>制約理論（TOC）</h3>
+        <p>組織全体の流れを止めている<strong>「制約（ボトルネック）」</strong>をAIが特定・制御し、全体最適化を図ります。</p>
+      </div>
+      <div class="card">
+        <div class="ic">♻️</div>
+        <h3>ナレッジマネジメント</h3>
+        <p>SECIモデル／知のスパイラルに基づき、成功・失敗の経験を体系的に蓄積し、AIの推論精度を継続的に高めます。</p>
+      </div>
+    </div>
+
+    <div style="margin-top:56px">
+      <h3 style="font-size:1.3rem;font-weight:800;text-align:center;margin-bottom:8px">ナレッジベースを支える<span class="gradient-text">3層構造</span></h3>
+      <p style="text-align:center;color:var(--muted);margin-bottom:30px">「何のために」「どこで」「どのように」という企業のコンテキストを体系的に設計します。</p>
+      <div class="pyramid">
+        <div class="layer l1">
+          <span class="lnum">01</span>
+          <span class="q">何のために存在するか</span>
+          <h4>規範ナレッジ</h4>
+          <p>理念、パーパス（存在意義）、価値観など、最も根本的な判断基準。</p>
+        </div>
+        <div class="layer l2">
+          <span class="lnum">02</span>
+          <span class="q">どこでどう戦い、どう行動すべきか</span>
+          <h4>戦略ナレッジ</h4>
+          <p>ビジョン、事業戦略、業務ルール、ガイドラインなどの指針。</p>
+        </div>
+        <div class="layer l3">
+          <span class="lnum">03</span>
+          <span class="q">現場で何がうまくいったか</span>
+          <h4>実践ナレッジ</h4>
+          <p>現場の具体的な活動実績や成果（成功・失敗）。AIの作業実績は1つずつ記録され、次のサイクルで参照されることで「知のスパイラル」による自己進化を促します。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STEPS -->
+<section class="block alt" id="steps">
+  <div class="wrap reveal">
+    <span class="eyebrow">How to start</span>
+    <h2 class="section-title">組織変革の3ステップ</h2>
+    <p class="section-lead">AIエージェントを「組織の一員」として活用するための導入手順です。</p>
+    <div class="steps">
+      <div class="step">
+        <div class="n">1</div>
+        <h3>環境を整える</h3>
+        <p>作業を可視化し、データ連携（API化）やナレッジベースを整備。AIが組織のルールや状況を理解できる状態を作ります。</p>
+      </div>
+      <div class="step">
+        <div class="n">2</div>
+        <h3>自律的な仮説検証</h3>
+        <p>AIエージェントを組織に組み込み、目標と実績のギャップから制約を発見・改善する仕組みを構築。PDCAを自動駆動させます。</p>
+      </div>
+      <div class="step">
+        <div class="n">3</div>
+        <h3>学習し進化する仕組み</h3>
+        <p>得られた知見を「実践ナレッジ」として蓄積・共有し、AIと人が共に成長し続ける循環（知のスパイラル）を作ります。</p>
+      </div>
+    </div>
+
+    <h3 style="font-size:1.2rem;font-weight:800;margin:56px 0 4px">導入のロードマップ（変革の順番）</h3>
+    <p style="color:var(--muted)">一気に全社導入せず、リスクを抑えて段階的に進めます。</p>
+    <div class="road">
+      <div class="phase">
+        <span class="step-badge">Phase 1</span>
+        <span class="en">Exploitation</span>
+        <h3>深化 ／ オペレーションの自律化</h3>
+        <p>購買・生産・販売など、標準化しやすく制約になりやすい領域からAIを適用し、コスト削減と適応力を高めます。</p>
+      </div>
+      <div class="phase">
+        <span class="step-badge">Phase 2</span>
+        <span class="en">Exploration</span>
+        <h3>探索 ／ 付加価値領域への展開</h3>
+        <p>自律化で浮いた人的リソースを、イノベーションや市場創造など人間主導の高付加価値業務へシフトさせます。</p>
+      </div>
+      <div class="phase">
+        <span class="step-badge">Phase 3</span>
+        <span class="en">Evolution</span>
+        <h3>継続的進化</h3>
+        <p>進化と探索が日常化し、変化に即応し続ける——挑戦し続ける企業文化が定着した状態を目指します。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- IMPLEMENTATION / TECH -->
+<section class="block" id="implement">
+  <div class="wrap reveal">
+    <span class="eyebrow">Implementation</span>
+    <h2 class="section-title">実装の技術基盤</h2>
+    <p class="section-lead">実装は「ナレッジベース」と「経営プラットフォーム」を軸とした組織構造の再設計プロセスです。まず理論を学習し、AIが活動するインフラを構築します。</p>
+    <div class="grid g2" style="margin-top:38px">
+      <div class="card">
+        <div class="ic">🛠️</div>
+        <h3>実行環境の構築</h3>
+        <p><strong>Claude Code</strong> などのAIエージェント実行環境を整え、<strong>MCP（Model Context Protocol）</strong>を介して社内システムやナレッジベースと接続します。</p>
+        <div class="tech-strip">
+          <span class="chip">Claude Code <small>実行環境</small></span>
+          <span class="chip">MCP <small>システム接続</small></span>
+          <span class="chip">ルーチン機能 <small>定期実行</small></span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="ic">📊</div>
+        <h3>環境整備の4つの仕組み</h3>
+        <p style="margin-bottom:14px">AIが「組織の一員」として正しく判断・行動できるように整えます。</p>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:10px;color:var(--muted);font-size:.94rem">
+          <li>① <b style="color:var(--text)">作業の可視化</b>：人とAIの全タスク実績を記録・評価</li>
+          <li>② <b style="color:var(--text)">データ連携（API化）</b>：ERP・CRM等を自律取得可能に</li>
+          <li>③ <b style="color:var(--text)">データマネジメント</b>：品質・機密レベルを定義</li>
+          <li>④ <b style="color:var(--text)">ナレッジベース構築</b>：規範・戦略・実践の3層で蓄積</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card" style="margin-top:20px;background:var(--grad-soft)">
+      <div class="ic">⏰</div>
+      <h3>改善の自動実行</h3>
+      <p>特定された制約に対し、AIが改善案を策定。Claude Codeのルーチン機能などを用いて<strong>定期実行（例：毎朝7時に監視と制御を実行）</strong>し、人間と共同または自律的にアクションを実行します。</p>
+    </div>
+  </div>
+</section>
+
+<!-- EFFECTS -->
+<section class="block alt" id="value">
+  <div class="wrap reveal">
+    <span class="eyebrow">Value</span>
+    <h2 class="section-title">もたらされる3つの力</h2>
+    <p class="section-lead">AIエージェントドリブン経営の導入により、組織は次の3つの力を獲得します。</p>
+    <div class="grid g3" style="margin-top:38px">
+      <div class="card effect">
+        <div class="big">🎯</div>
+        <h3>成功力</h3>
+        <p>客観的事実に基づく意思決定と高速なPDCAにより、意思決定の精度と事業の成功確率を最大化します。</p>
+      </div>
+      <div class="card effect">
+        <div class="big">🧭</div>
+        <h3>適応力</h3>
+        <p>AIがオペレーションを継続監視し、制約を特定・制御することで、環境変化に迅速に対応できます。</p>
+      </div>
+      <div class="card effect">
+        <div class="big">🌿</div>
+        <h3>継続力</h3>
+        <p>心理的制約の軽減や認知負荷の解放により、メンバーの創造性が発揮され、主体的な挑戦が続く組織になります。</p>
+      </div>
+    </div>
+    <div class="card" style="margin-top:20px;text-align:center;border-style:dashed">
+      <p style="color:var(--muted);font-size:1rem">AIは<strong style="color:var(--text)">「否定しない」「疲れない」</strong>ため、人間が間違いを恐れず試行錯誤できる<strong style="color:var(--text)">心理的安全性の向上</strong>にも寄与し、個人の成長を加速させます。</p>
+    </div>
+  </div>
+</section>
+
+<!-- CASES -->
+<section class="block" id="cases">
+  <div class="wrap reveal">
+    <span class="eyebrow">Use cases</span>
+    <h2 class="section-title">具体的なユースケースと事例</h2>
+    <p class="section-lead">オペレーションの現場から専門業務まで、AIエージェントが自律的に価値を生み出します。</p>
+    <div class="grid g3" style="margin-top:38px">
+      <div class="card">
+        <div class="case">
+          <div class="cic">📦</div>
+          <div>
+            <h3>小売業のサプライチェーン制御</h3>
+            <p>AIエージェントが欠品率やリードタイムを毎日監視し、物流センターのピッキング工程などの制約を特定・改善します。</p>
+            <span class="metric">目標：欠品ゼロ</span>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="case">
+          <div class="cic">✂️</div>
+          <div>
+            <h3>店舗運営のボトルネック特定</h3>
+            <p>1000カットショップ等の事例で、AIがスタッフの平均作業時間データから、個人技量ではなく工程そのものに制約があることを突き止め、改善案を提示します。</p>
+            <span class="metric">工程の制約を可視化</span>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="case">
+          <div class="cic">📝</div>
+          <div>
+            <h3>専門業務の自動代行</h3>
+            <p>複雑な財務分析レポートの作成や、競合サイトを分析した上でのSEO記事のアウトライン作成などを、AIが自律的に遂行します。</p>
+            <span class="metric">高付加価値業務を支援</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="block alt" id="faq">
+  <div class="wrap reveal">
+    <span class="eyebrow">FAQ</span>
+    <h2 class="section-title">よくある誤解と注意点</h2>
+    <p class="section-lead" style="margin-bottom:36px">導入前に押さえておきたい、4つの重要なポイント。</p>
+    <div class="faq">
+      <details class="qa" open>
+        <summary>「チャットAI」と何が違うの？<span class="plus">+</span></summary>
+        <div class="a">単なる質問回答（指示待ち）ではありません。<b>目標を与えれば自ら手順を考え、外部ツール（API）を使って実行まで完結させる</b>のがAIエージェントです。人間の作業を支援する「副操縦士」ではなく、目標達成のために自ら行動する「操縦士」へと役割が進化しています。</div>
+      </details>
+      <details class="qa">
+        <summary>なぜナレッジベースが重要なの？<span class="plus">+</span></summary>
+        <div class="a">企業の独自性（コンテキスト）を教えなければ、AIは<b>一般的な回答しか出せません</b>。「何のために・どこで・どのように」を定義した規範・戦略ナレッジの設計が不可欠です。これがAIエージェントの判断基準となります。</div>
+      </details>
+      <details class="qa">
+        <summary>どこから導入すればいい？（導入の順番）<span class="plus">+</span></summary>
+        <div class="a">最初から全社的な「探索（イノベーション）」を目指すのではなく、まずは<b>標準化しやすい「進化（オペレーションの自律化）」から着手する</b>ことが、全体のスループット向上には効果的です。浮いたリソースを高付加価値業務へシフトさせていきます。</div>
+      </details>
+      <details class="qa">
+        <summary>安全に運用するには？（ガードレールの必要性）<span class="plus">+</span></summary>
+        <div class="a">AIの自律性ゆえの暴走や悪意ある利用を防ぐため、<b>セキュリティや倫理面での「ガードレール」を構築</b>する必要があります。データの機密レベルや品質要件を定義し、AIが安全かつ正確にデータを扱える設計が求められます。</div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="block">
+  <div class="wrap reveal">
+    <div class="cta">
+      <h2>人とAIが共に成長する、<br>自律駆動の経営へ。</h2>
+      <p>まずは自社の「制約」を見つけ、標準化しやすい領域からAIエージェントを組み込む。その一歩が、成功力・適応力・継続力を備えた組織への変革を始めます。</p>
+      <a href="#what" class="btn btn-primary">経営モデルをもう一度見る ↑</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot-inner">
+    <div>
+      <div class="logo" style="margin-bottom:12px"><span class="mark"><span>◆</span></span> AIエージェントドリブン経営</div>
+      <p class="foot-note">本ページは「AIエージェントドリブン経営」に関する学習ノート（NotebookLM）の内容をもとに構成した解説ページです。エンタープライズアーキテクチャ・制約理論・ナレッジマネジメントを融合し、人とAIが共創する次世代の経営モデルを紹介しています。</p>
+    </div>
+    <div style="text-align:right">
+      <a href="../" style="color:var(--text);border-bottom:1px solid var(--line);padding-bottom:2px">← m-note トップへ戻る</a>
+      <div style="color:var(--muted);margin-top:14px">© 2026 m-note</div>
+      <div style="margin-top:6px;font-size:.8rem">科学的マネジメント × AIエージェント</div>
+    </div>
+  </div>
+  <div class="wrap" style="margin-top:28px">
+    <p style="font-size:.76rem;color:var(--faint);line-height:1.7;max-width:46em">専門家ではない個人が学習・情報提供のために作った個人的なまとめです。内容の正確性を保証するものではありません。</p>
+  </div>
+</footer>
+
+<script>
+  // mark JS active so reveal styles apply (no-JS renders stay fully visible)
+  document.documentElement.classList.add('js');
+  // scroll reveal
+  const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.12});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+</script>
+
+</body>
+</html>
